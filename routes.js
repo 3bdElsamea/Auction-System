@@ -2,17 +2,15 @@ const express = require('express');
 
 const dashboardRoute=require('./routes/dashboardRoute');
 const websiteRoute=require('./routes/websiteRoute');
+const {_500,_404}=require('./middlewares/errorsMW');
 
 const router = express.Router();
 
-router.use('/dashboard',dashboardRoute);
+router.use('/admin',dashboardRoute);
 router.use('/',websiteRoute);
 
-router.all('*',(req,res,next)=>{
-    res.status(404).json({
-        status:'fail',
-        message:`Can't find ${req.originalUrl} on this server`
-    });
-});
+// Error Handlers
+router.use(_404); // Not Found Handlers
+router.use(_500); // Error Handler
 
 module.exports = router;

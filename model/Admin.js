@@ -19,12 +19,15 @@ const Admin = sequelize.define('Admin', {
     },
     password:{
         type:DataTypes.STRING,
-        allowNull:false
+        allowNull:false,
+        set(value) {
+            this.setDataValue('password', bcrypt.hashSync(value, 10));
+        }
     },
 
 }, {
     tableName:"admins",
-    hooks: {
+    /*hooks: {
         beforeCreate: async (admin) => {
             if (admin.password) {
                 const salt = await bcrypt.genSaltSync(10);
@@ -37,7 +40,12 @@ const Admin = sequelize.define('Admin', {
                 admin.password = bcrypt.hashSync(admin.password, salt);
             }
         },
-    }
+    }*/
 });
+
+(async () => {
+    await sequelize.sync({ force: true });
+    // Code here
+})();
 
 module.exports = Admin;
