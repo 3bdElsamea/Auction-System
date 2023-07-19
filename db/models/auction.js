@@ -14,7 +14,6 @@ module.exports = (sequelize, DataTypes) => {
 
   Auction.init(
     {
-      // reference_number: DataTypes.INTEGER,
       start_date: {
         type: DataTypes.DATE,
         allowNull: false,

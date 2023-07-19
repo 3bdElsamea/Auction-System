@@ -9,9 +9,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      // reference_number: {
-      //   type: Sequelize.INTEGER,
-      // },
       start_date: {
         allowNull: false,
         type: Sequelize.DATE,

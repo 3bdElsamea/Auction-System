@@ -1,6 +1,0 @@
-https://sequelize.org/docs/v6/core-concepts/validations-and-constraints/#per-attribute-validations
-######To Do
-item images model
-check timestamps
-bid and item bid condition
-auction reference number deleted ✔
