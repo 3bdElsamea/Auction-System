@@ -1,5 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
+
 module.exports = (sequelize, DataTypes) => {
   class Auction extends Model {
     /**
@@ -56,5 +57,6 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "Auction",
     }
   );
+
   return Auction;
 };

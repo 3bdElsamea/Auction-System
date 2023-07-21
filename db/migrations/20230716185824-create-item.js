@@ -13,6 +13,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
+      slug: {
+        type: Sequelize.STRING,
+        unique: true,
+      },
       material: {
         allowNull: false,
         type: Sequelize.STRING,

@@ -1,6 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
-const bcrypt = require("bcrypt");
+const useBcrypt = require("sequelize-bcrypt");
+const SequelizeSlugify = require("sequelize-slugify");
 module.exports = (sequelize, DataTypes) => {
   class Admin extends Model {
     /**
@@ -10,6 +11,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+    }
+
+    static findByEmail(email) {
+      return this.findOne({ where: { email: email } });
+    }
+
+    static findBySlug(slug) {
+      return this.findOne({ where: { slug: slug } });
     }
   }
 
@@ -21,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           is: /^[a-zA-Z ]{3,}$/,
         },
+      },
+      slug: {
+        type: DataTypes.STRING,
+        unique: true,
       },
       email: {
         type: DataTypes.STRING,
@@ -36,16 +49,19 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           // is: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{6,}$/,
         },
-        set(value) {
-          this.setDataValue("password", bcrypt.hashSync(value, 10));
-        },
       },
     },
     {
       sequelize,
       modelName: "Admin",
-      // timestamps: true,
     }
   );
+
+  useBcrypt(Admin);
+
+  SequelizeSlugify.slugifyModel(Admin, {
+    source: ["name"],
+  });
+
   return Admin;
 };

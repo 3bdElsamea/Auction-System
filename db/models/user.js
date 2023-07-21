@@ -1,6 +1,8 @@
 "use strict";
 const { Model } = require("sequelize");
-const bcrypt = require("bcrypt");
+const useBcrypt = require("sequelize-bcrypt");
+const SequelizeSlugify = require("sequelize-slugify");
+const SequelizeTokenify = require("sequelize-tokenify");
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -11,6 +13,22 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
     }
+
+    static findByEmail(email) {
+      return this.findOne({
+        where: {
+          email,
+        },
+      });
+    }
+
+    static findBySlug(slug) {
+      return this.findOne({
+        where: {
+          slug,
+        },
+      });
+    }
   }
 
   User.init(
@@ -19,10 +37,13 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         validate: {
           is: {
-            //     at least 3 characters long with only letters and spaces
             args: [/^[a-zA-Z ]{3,}$/],
           },
         },
+      },
+      slug: {
+        type: DataTypes.STRING,
+        unique: true,
       },
       email: {
         type: DataTypes.STRING,
@@ -33,14 +54,12 @@ module.exports = (sequelize, DataTypes) => {
       },
       password: {
         type: DataTypes.STRING,
-        validate: {
-          is: {
-            // args: [/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{6,}$/],
-          },
-        },
-        set(value) {
-          this.setDataValue("password", bcrypt.hashSync(value, 10));
-        },
+        validate: null,
+        //     {
+        //   is: {
+        //     // args: [/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{6,}$/],
+        //   },
+        // },
       },
       phone: {
         type: DataTypes.STRING,
@@ -54,11 +73,27 @@ module.exports = (sequelize, DataTypes) => {
       balance: DataTypes.INTEGER,
       pending_balance: DataTypes.INTEGER,
       false_bids: DataTypes.INTEGER,
+      reset_token: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      reset_token_expires_at: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
     },
     {
       sequelize,
       modelName: "User",
     }
   );
+  useBcrypt(User);
+  SequelizeSlugify.slugifyModel(User, {
+    source: ["name"],
+  });
+  SequelizeTokenify.tokenify(User, {
+    field: "reset_token",
+    length: 12,
+  });
   return User;
 };

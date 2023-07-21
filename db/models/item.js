@@ -1,5 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
+const SequelizeSlugify = require("sequelize-slugify");
+
 module.exports = (sequelize, DataTypes) => {
   class Item extends Model {
     /**
@@ -19,6 +21,10 @@ module.exports = (sequelize, DataTypes) => {
           is: /^[a-zA-Z ]{3,}$/,
         },
       },
+      slug: {
+        type: DataTypes.STRING,
+        unique: true,
+      },
       material: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -37,5 +43,9 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "Item",
     }
   );
+
+  SequelizeSlugify.slugifyModel(Item, {
+    source: ["name"],
+  });
   return Item;
 };
