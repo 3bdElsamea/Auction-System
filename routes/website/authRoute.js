@@ -1,6 +1,7 @@
 const express = require("express");
 
 const authMW = require("../../middlewares/authMW");
+const existanceCheckMW = require("../../middlewares/existanceCheckMW");
 const {
   register,
   login,
@@ -14,9 +15,12 @@ const router = express.Router();
 
 router.post("/register", register);
 router.post("/login", login("User"));
-router.get("/me", authMW("User"), myProfile("User"));
-router.patch("/me/update", authMW("User"), updateMyProfile("User"));
-router.patch("/me/change-password", authMW("User"), changePassword("User"));
 router.post("/forgot-password", forgotPassword);
+
+router.use(authMW("User"));
+router.use(existanceCheckMW("User"));
+
+router.route("/me").get(myProfile).patch(updateMyProfile);
+router.patch("/me/change-password", changePassword);
 
 module.exports = router;
