@@ -10,6 +10,13 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {}
+
+    static findBySlug(slug, options = {}) {
+      return this.findOne({
+        where: { slug: slug },
+        ...options,
+      });
+    }
   }
 
   Item.init(

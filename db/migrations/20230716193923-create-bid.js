@@ -21,10 +21,18 @@ module.exports = {
         },
         type: Sequelize.INTEGER,
       },
-      item_bid_condition_id: {
+      item_id: {
         allowNull: false,
         references: {
-          model: "Item_bid_conditions",
+          model: "Items",
+          key: "id",
+        },
+        type: Sequelize.INTEGER,
+      },
+      auction_id: {
+        allowNull: false,
+        references: {
+          model: "Auctions",
           key: "id",
         },
         type: Sequelize.INTEGER,

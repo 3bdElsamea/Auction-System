@@ -1,5 +1,5 @@
 "use strict";
-const { Model } = require("sequelize");
+const { Model, Op } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Bid extends Model {
     /**
@@ -39,6 +39,25 @@ module.exports = (sequelize, DataTypes) => {
       amount: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        validate: {
+          isInt: true,
+          async validateAmount(value) {
+            const itemBidCondition =
+              await sequelize.models.Item_bid_condition.findOne({
+                where: {
+                  [Op.and]: [
+                    { item_id: this.item_id },
+                    { auction_id: this.auction_id },
+                  ],
+                },
+              });
+            if (value < itemBidCondition.minimum_bidding_amount) {
+              throw new Error(
+                `Bid amount must be greater than or equal to ${itemBidCondition.minimum_bidding_amount}`
+              );
+            }
+          },
+        },
       },
       user_id: {
         type: DataTypes.INTEGER,

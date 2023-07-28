@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           isDate: true,
-          isAfter: new Date(Date.now() + 25 * 60 * 60 * 1000).toISOString(),
+          isAfter: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
         },
       },
       entry_fees: {

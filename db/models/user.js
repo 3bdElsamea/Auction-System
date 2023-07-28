@@ -2,7 +2,7 @@
 const { Model } = require("sequelize");
 const useBcrypt = require("sequelize-bcrypt");
 const SequelizeSlugify = require("sequelize-slugify");
-const SequelizeTokenify = require("sequelize-tokenify");
+// const SequelizeTokenify = require("sequelize-tokenify");
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -22,10 +22,27 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
 
-    static findBySlug(slug) {
+    static findBySlug(slug, options = {}) {
       return this.findOne({
         where: {
           slug,
+        },
+        attributes: {
+          exclude: [
+            "password",
+            "reset_token",
+            "reset_token_expires_at",
+            "deletedAt",
+          ],
+        },
+        ...options,
+      });
+    }
+
+    static findByToken(token) {
+      return this.findOne({
+        where: {
+          reset_token: token,
         },
       });
     }
@@ -81,19 +98,32 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: true,
       },
+      deletedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
     },
     {
       sequelize,
       modelName: "User",
+      paranoid: true,
+      scopes: {
+        customResponse: {
+          attributes: {
+            exclude: [
+              "password",
+              "reset_token",
+              "reset_token_expires_at",
+              "deletedAt",
+            ],
+          },
+        },
+      },
     }
   );
   useBcrypt(User);
   SequelizeSlugify.slugifyModel(User, {
     source: ["name"],
-  });
-  SequelizeTokenify.tokenify(User, {
-    field: "reset_token",
-    length: 12,
   });
   return User;
 };

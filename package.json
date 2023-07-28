@@ -10,6 +10,8 @@
     "dev": "nodemon ."
   },
   "dependencies": {
+    "bcrypt": "^5.1.0",
+    "cloudinary": "^1.39.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
@@ -24,7 +26,8 @@
     "sequelize-slugify": "^1.6.2",
     "sequelize-tokenify": "^0.2.4",
     "sequelize-transforms": "^2.0.0",
-    "socket.io": "^4.7.1"
+    "socket.io": "^4.7.1",
+    "stream": "^0.0.2"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.0.2",

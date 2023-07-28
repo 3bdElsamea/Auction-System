@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const db = require("../db/models");
 const appError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
+const getModel = require("../utils/getModel");
 
 const Admin = db.Admin;
 const User = db.User;
@@ -17,8 +18,7 @@ const verifyToken = (token) => {
 };
 
 const checkUserExists = async (role, userId) => {
-  const Model = role === "Admin" ? Admin : User;
-  const user = await Model.findByPk(userId);
+  const user = await getModel(role).findByPk(userId);
   if (!user) {
     throw new appError(`Unauthorized - ${role} doesn't Exist.`, 404);
   }
@@ -40,6 +40,8 @@ module.exports = (role) =>
         new appError(`Unauthorized - Only ${role}s Can access this route`)
       );
     }
+
+    // console.log(decodedToken.role, decodedToken.userId);
 
     if (role === "Admin") {
       req.admin = await checkUserExists(role, decodedToken.userId);

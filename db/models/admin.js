@@ -2,6 +2,7 @@
 const { Model } = require("sequelize");
 const useBcrypt = require("sequelize-bcrypt");
 const SequelizeSlugify = require("sequelize-slugify");
+const { Op } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Admin extends Model {
     /**
@@ -17,9 +18,17 @@ module.exports = (sequelize, DataTypes) => {
       return this.findOne({ where: { email: email } });
     }
 
-    static findBySlug(slug) {
-      return this.findOne({ where: { slug: slug } });
+    static findBySlug(slug, options = {}) {
+      return this.findOne({
+        where: { slug: slug },
+        attributes: {
+          exclude: ["password", "deletedAt"],
+        },
+        ...options,
+      });
     }
+
+    // custom response
   }
 
   Admin.init(
@@ -49,16 +58,24 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           // is: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{6,}$/,
         },
+        deletedAt: {
+          type: DataTypes.DATE,
+          allowNull: true,
+        },
       },
     },
     {
       sequelize,
       modelName: "Admin",
+      paranoid: true,
+      scopes: {
+        customResponse: {
+          attributes: { exclude: ["password", "deletedAt"] },
+        },
+      },
     }
   );
-
   useBcrypt(Admin);
-
   SequelizeSlugify.slugifyModel(Admin, {
     source: ["name"],
   });

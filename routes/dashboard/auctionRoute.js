@@ -1,14 +1,22 @@
-const express = require('express');
-
+const express = require("express");
+const auctionExistenceCheck = require("../../middlewares/exstenceWithSlugOrIdMW");
+const {
+  getAllAuctions,
+  createAuction,
+  getAuction,
+  // deleteAuction,
+  updateAuction,
+} = require("../../controllers/dashboard/auctionController");
 
 const router = express.Router();
 
-router.get('/',(req,res,next)=>{
-    res.status(200).json({
-        status: 'success',
-        message: 'This is the dashboard homepage'
-    });
-});
+router.route("/").get(getAllAuctions).post(createAuction);
 
+router
+  .route("/:id")
+  .all(auctionExistenceCheck("id", "Auction"))
+  .get(getAuction)
+  .patch(updateAuction);
+// .delete(deleteAuction);
 
 module.exports = router;

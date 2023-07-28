@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const db = require("../db/models");
 const catchAsync = require("../utils/catchAsync");
@@ -65,6 +66,14 @@ exports.updateMyProfile = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.deleteMyProfile = catchAsync(async (req, res, next) => {
+  await req.existingUser.destroy();
+  res.status(204).json({
+    status: "success",
+    message: "Profile deleted successfully",
+  });
+});
+
 exports.changePassword = catchAsync(async (req, res, next) => {
   const { oldPassword, newPassword, confirmNewPassword } = req.body;
   const user = req.existingUser;
@@ -90,5 +99,22 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     status: "success",
     token: resetToken,
     message: "Password reset token sent to email!",
+  });
+});
+
+exports.resetPassword = catchAsync(async (req, res, next) => {
+  const { password, confirmPassword } = req.body;
+  const user = await User.findByToken(req.params.token);
+  if (!user || user.reset_token_expires_at < Date.now())
+    return next(new AppError("Invalid or expired token", 400));
+  if (password !== confirmPassword)
+    return next(new AppError("Passwords do not match", 400));
+  user.password = password;
+  user.reset_token = null;
+  user.reset_token_expires_at = null;
+  await user.save();
+  res.status(200).json({
+    status: "success",
+    message: "Password reset successfully",
   });
 });
