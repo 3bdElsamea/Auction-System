@@ -1,22 +1,32 @@
 const express = require("express");
 const auctionExistenceCheck = require("../../middlewares/exstenceWithSlugOrIdMW");
+const blackList = require("../../middlewares/blackListMW");
 const {
   getAllAuctions,
   createAuction,
   getAuction,
-  // deleteAuction,
   updateAuction,
+  activateAuction,
 } = require("../../controllers/dashboard/auctionController");
 
 const router = express.Router();
 
-router.route("/").get(getAllAuctions).post(createAuction);
+const blackListArray = ["isActive"];
+
+router
+  .route("/")
+  .get(getAllAuctions)
+  .post(blackList(blackListArray), createAuction);
 
 router
   .route("/:id")
   .all(auctionExistenceCheck("id", "Auction"))
   .get(getAuction)
-  .patch(updateAuction);
-// .delete(deleteAuction);
+  .patch(blackList(blackListArray), updateAuction);
 
+router.patch(
+  "/:id/activate",
+  auctionExistenceCheck("id", "Auction"),
+  activateAuction
+);
 module.exports = router;

@@ -18,6 +18,15 @@ module.exports = {
         },
         type: Sequelize.INTEGER,
       },
+      item_id: {
+        allowNull: false,
+        foreignKey: true,
+        references: {
+          model: "Items",
+          key: "id",
+        },
+        type: Sequelize.INTEGER,
+      },
       amount: {
         allowNull: false,
         type: Sequelize.INTEGER,

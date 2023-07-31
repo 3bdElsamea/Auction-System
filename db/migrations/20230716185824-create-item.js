@@ -29,6 +29,23 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
+      winner_id: {
+        type: Sequelize.INTEGER,
+        foreignKey: true,
+        references: {
+          model: "Users",
+          key: "id",
+        },
+      },
+      sold_price: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      status: {
+        allowNull: false,
+        type: Sequelize.ENUM("available", "sold"),
+        defaultValue: "available",
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

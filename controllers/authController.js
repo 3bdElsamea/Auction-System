@@ -5,6 +5,7 @@ const db = require("../db/models");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const getModel = require("../utils/getModel");
+const { success } = require("../utils/response");
 
 const Admin = db.Admin;
 const User = db.User;
@@ -22,10 +23,7 @@ exports.register = catchAsync(async (req, res, next) => {
 
   const user = await User.create(req.body);
   const token = createToken(user.id, "User");
-  res.status(201).json({
-    status: "success",
-    token,
-  });
+  success(res, 201, { token: token });
 });
 
 exports.login = (role) =>
@@ -41,37 +39,23 @@ exports.login = (role) =>
       return next(new AppError("Incorrect email or password", 401));
 
     const token = createToken(user.id, role);
-
-    res.status(200).json({
-      status: "success",
-      token,
-      user,
-    });
+    success(res, 200, { token: token });
   });
 
 exports.myProfile = catchAsync(async (req, res, next) => {
   const user = req.existingUser;
-  res.status(200).json({
-    status: "success",
-    data: user,
-  });
+  success(res, 200, user);
 });
 
 exports.updateMyProfile = catchAsync(async (req, res, next) => {
   delete req.body.password;
   const user = await req.existingUser.update(req.body);
-  res.status(200).json({
-    status: "success",
-    data: user,
-  });
+  success(res, 200, { data: user });
 });
 
 exports.deleteMyProfile = catchAsync(async (req, res, next) => {
   await req.existingUser.destroy();
-  res.status(204).json({
-    status: "success",
-    message: "Profile deleted successfully",
-  });
+  success(res, 204, { message: "Profile deleted successfully" });
 });
 
 exports.changePassword = catchAsync(async (req, res, next) => {
@@ -82,10 +66,7 @@ exports.changePassword = catchAsync(async (req, res, next) => {
   if (newPassword !== confirmNewPassword)
     return next(new AppError("Passwords do not match", 400));
   await user.update({ password: newPassword });
-  res.status(200).json({
-    status: "success",
-    message: "Password changed successfully",
-  });
+  success(res, 200, { message: "Password changed successfully" });
 });
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
@@ -95,10 +76,9 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   user.reset_token = resetToken;
   user.reset_token_expires_at = Date.now() + 10 * 60 * 1000;
   await user.save({ validate: false });
-  res.status(200).json({
-    status: "success",
-    token: resetToken,
-    message: "Password reset token sent to email!",
+  success(res, 200, {
+    message: "Reset token sent to email",
+    data: { resetToken },
   });
 });
 
@@ -113,8 +93,5 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   user.reset_token = null;
   user.reset_token_expires_at = null;
   await user.save();
-  res.status(200).json({
-    status: "success",
-    message: "Password reset successfully",
-  });
+  success(res, 200, { message: "Password reset successfully" });
 });

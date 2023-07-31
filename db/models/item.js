@@ -1,6 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 const SequelizeSlugify = require("sequelize-slugify");
+const { Op } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
   class Item extends Model {
@@ -9,7 +10,12 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models) {}
+    static associate(models) {
+      Item.belongsTo(models.User, {
+        foreignKey: "winner_id",
+        as: "winner",
+      });
+    }
 
     static findBySlug(slug, options = {}) {
       return this.findOne({
@@ -43,6 +49,26 @@ module.exports = (sequelize, DataTypes) => {
       size: {
         type: DataTypes.STRING,
         allowNull: false,
+      },
+      winner_id: {
+        type: DataTypes.INTEGER,
+        foreignKey: true,
+        references: {
+          model: "Users",
+          key: "id",
+        },
+      },
+      sold_price: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      status: {
+        type: DataTypes.ENUM("available", "sold"),
+        defaultValue: "available",
+        allowNull: false,
+        validate: {
+          isIn: [["available", "sold"]],
+        },
       },
     },
     {

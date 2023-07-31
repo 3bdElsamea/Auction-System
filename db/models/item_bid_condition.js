@@ -89,6 +89,18 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "Item_bid_condition",
+      hooks: {
+        beforeUpdate: async (item_bid_condition, options) => {
+          const auction = await sequelize.models.Auction.findByPk(
+            item_bid_condition.auction_id
+          );
+          if (auction.isActive)
+            throw new AppError(
+              "can't update the bidding condition after the auction is activated",
+              400
+            );
+        },
+      },
     }
   );
   return Item_bid_condition;

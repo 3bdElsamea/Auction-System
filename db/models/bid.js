@@ -1,5 +1,6 @@
 "use strict";
 const { Model, Op } = require("sequelize");
+const AppError = require("../../utils/appError");
 module.exports = (sequelize, DataTypes) => {
   class Bid extends Model {
     /**
@@ -52,7 +53,7 @@ module.exports = (sequelize, DataTypes) => {
                 },
               });
             if (value < itemBidCondition.minimum_bidding_amount) {
-              throw new Error(
+              throw new AppError(
                 `Bid amount must be greater than or equal to ${itemBidCondition.minimum_bidding_amount}`
               );
             }

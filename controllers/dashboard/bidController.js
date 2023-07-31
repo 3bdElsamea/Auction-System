@@ -20,8 +20,14 @@ exports.getBid = catchAsync(async (req, res) => {
   });
 });
 
+// Only for user in the website
 exports.createBid = catchAsync(async (req, res) => {
-  const bid = await Bid.create(req.body);
+  const bid = await Bid.create({
+    user_id: req.user.id,
+    amount: req.body.amount,
+    item_id: req.body.item_id,
+    auction_id: req.body.auction_id,
+  });
   res.status(201).json({
     status: "success",
     data: { bid },

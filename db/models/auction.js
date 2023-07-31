@@ -1,5 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
+const AppError = require("../../utils/appError");
 
 module.exports = (sequelize, DataTypes) => {
   class Auction extends Model {
@@ -38,23 +39,45 @@ module.exports = (sequelize, DataTypes) => {
           isInt: true,
         },
       },
+      isActive: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
       status: {
         type: DataTypes.VIRTUAL,
         get() {
-          const currentDate = new Date();
-          if (currentDate > this.end_date) {
-            return "Completed";
-          } else if (currentDate > this.start_date) {
-            return "Ongoing";
-          } else {
-            return "Upcoming";
-          }
+          const now = new Date();
+          const startDate = new Date(this.start_date);
+          const endDate = new Date(this.end_date);
+          if (!this.isActive) return "not active";
+          else if (now < startDate) return "upcoming";
+          else if (now >= startDate && now <= endDate) return "ongoing";
+          else return "finished";
         },
       },
     },
+
     {
       sequelize,
       modelName: "Auction",
+      hooks: {
+        //   before update the isActive field to true, check if the auction has any items
+
+        beforeUpdate: async (auction) => {
+          if (auction.isActive) {
+            const auctionItems =
+              await sequelize.models.Item_bid_condition.findAll({
+                where: {
+                  auction_id: auction.id,
+                },
+              });
+            if (auctionItems.length === 0) {
+              throw new AppError("Cannot start auction without any items", 400);
+            }
+          }
+        },
+      },
     }
   );
 
