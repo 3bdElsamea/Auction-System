@@ -12,7 +12,6 @@ const verifyToken = (token) => {
   try {
     return jwt.verify(token, process.env.JWT_SECRET);
   } catch (error) {
-    // AppError is a custom error class
     throw new appError("Invalid Token", 401);
   }
 };
@@ -34,14 +33,11 @@ module.exports = (role) =>
     const token = authHeader.split(" ")[1];
 
     const decodedToken = verifyToken(token);
-
     if (decodedToken.role !== role) {
       return next(
         new appError(`Unauthorized - Only ${role}s Can access this route`)
       );
     }
-
-    // console.log(decodedToken.role, decodedToken.userId);
 
     if (role === "Admin") {
       req.admin = await checkUserExists(role, decodedToken.userId);

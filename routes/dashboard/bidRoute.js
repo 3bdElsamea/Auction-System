@@ -2,9 +2,6 @@ const express = require("express");
 const existenceMW = require("../../middlewares/exstenceWithSlugOrIdMW");
 const {
   getAllBids,
-  getBid,
-  createBid,
-  getBidByUser,
   getBidByAuction,
   getBidByItem,
   getBidByAuctionAndItem,
@@ -12,11 +9,7 @@ const {
 
 const router = express.Router();
 
-router.route("/").get(getAllBids).post(createBid);
-
-router.route("/:id").all(existenceMW("id", "Bid")).get(getBid);
-
-router.route("/user/:userId").get(existenceMW("id", "User"), getBidByUser);
+router.route("/").get(getAllBids);
 
 router
   .route("/auction/:auctionId")

@@ -41,6 +41,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER,
       },
+      current_high_bid: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+      },
       close_price: {
         type: Sequelize.INTEGER,
       },

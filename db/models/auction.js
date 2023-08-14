@@ -63,7 +63,6 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "Auction",
       hooks: {
         //   before update the isActive field to true, check if the auction has any items
-
         beforeUpdate: async (auction) => {
           if (auction.isActive) {
             const auctionItems =

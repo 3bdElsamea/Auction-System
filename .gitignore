@@ -2,4 +2,3 @@
 .vscode
 node_modules
 .env
-db/seeders/20230722162216-demo-admin.js

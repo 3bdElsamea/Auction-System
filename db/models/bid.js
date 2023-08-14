@@ -76,6 +76,48 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "Bid",
+      hooks: {
+        beforeCreate: async (bid, options) => {
+          const auction = await sequelize.models.Auction.findByPk(
+            bid.auction_id
+          );
+          if (auction.status !== "ongoing")
+            throw new AppError(
+              "can't create a bid unless the auction status is ongoing",
+              400
+            );
+          const itemBidCondition =
+            await sequelize.models.Item_bid_condition.findOne({
+              where: {
+                [Op.and]: [
+                  { item_id: bid.item_id },
+                  { auction_id: bid.auction_id },
+                ],
+              },
+            });
+          const startDate = new Date(itemBidCondition.start_time);
+          if (startDate > new Date())
+            throw new AppError(
+              "can't create a bid unless the item start time is passed",
+              400
+            );
+        },
+
+        afterCreate: async (bid, options) => {
+          const itemBidCondition =
+            await sequelize.models.Item_bid_condition.findOne({
+              where: {
+                [Op.and]: [
+                  { item_id: bid.item_id },
+                  { auction_id: bid.auction_id },
+                ],
+              },
+            });
+          const previousHighBid = itemBidCondition.current_high_bid;
+          itemBidCondition.current_high_bid = previousHighBid + bid.amount;
+          await itemBidCondition.save();
+        },
+      },
     }
   );
   return Bid;

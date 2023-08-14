@@ -72,8 +72,12 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
+      current_high_bid: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
       close_price: {
-        allowNull: false,
+        allowNull: true,
         type: DataTypes.INTEGER,
         validate: {
           isMoreThanStartAmount(value) {
