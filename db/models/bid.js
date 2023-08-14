@@ -116,6 +116,7 @@ module.exports = (sequelize, DataTypes) => {
           const previousHighBid = itemBidCondition.current_high_bid;
           itemBidCondition.current_high_bid = previousHighBid + bid.amount;
           await itemBidCondition.save();
+          //   after creat a bid if the auction end time is about or less than 45 seconds then add 45 seconds to the auction end time
         },
       },
     }

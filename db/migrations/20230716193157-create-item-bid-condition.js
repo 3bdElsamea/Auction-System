@@ -29,10 +29,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      duration: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
-      },
       start_amount: {
         allowNull: false,
         type: Sequelize.INTEGER,
@@ -42,8 +38,8 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       current_high_bid: {
+        allowNull: false,
         type: Sequelize.INTEGER,
-        defaultValue: 0,
       },
       close_price: {
         type: Sequelize.INTEGER,

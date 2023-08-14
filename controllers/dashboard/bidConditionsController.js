@@ -25,6 +25,7 @@ exports.getBidCondition = catchAsync(async (req, res) => {
 });
 
 exports.createBidCondition = catchAsync(async (req, res) => {
+  req.body.current_high_bid = req.body.start_amount;
   const bidCondition = await BidCondition.create(req.body);
   res.status(201).json({
     status: "success",

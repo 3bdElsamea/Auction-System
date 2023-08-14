@@ -38,23 +38,7 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
-      duration: {
-        allowNull: false,
-        type: DataTypes.INTEGER,
-        validate: {
-          min: 900000,
-          async isLessThan50Minutes(value) {
-            const auction = await sequelize.models.Auction.findByPk(
-              this.auction_id
-            );
-            if (this.start_time > auction.end_date - 4500000 && value > 3000000)
-              throw new AppError(
-                "duration must be less than 50 minutes if the start_time is less than 1.25 hour before the auction end_date",
-                400
-              );
-          },
-        },
-      },
+
       start_amount: {
         allowNull: false,
         type: DataTypes.INTEGER,
@@ -73,8 +57,8 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       current_high_bid: {
+        allowNull: true,
         type: DataTypes.INTEGER,
-        defaultValue: 0,
       },
       close_price: {
         allowNull: true,
