@@ -10,7 +10,7 @@ const app = express();
 app.use(cors());
 app.options('*', cors()); // cors preflight
 app.use(express.json({limit: '10kb'}));
-router.use(express.urlencoded({extended: true, limit: '10kb'}));
+router.use(express.urlencoded({extended: true, limit: '10kb'})); // parse urlencoded request body
 app.use(express.static(path.join(__dirname, 'public'))); //static files
 
 
