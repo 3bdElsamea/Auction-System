@@ -13,10 +13,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      end_date: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
       entry_fees: {
         allowNull: false,
         type: Sequelize.INTEGER,

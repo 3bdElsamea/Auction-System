@@ -9,22 +9,20 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models) {
-      // define association here
+    static associate(models) {}
+
+    async getTotalDuration() {
+      return await sequelize.models.Item_bid_condition.sum("duration", {
+        where: {
+          auction_id: this.id,
+        },
+      });
     }
   }
 
   Auction.init(
     {
       start_date: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        validate: {
-          isDate: true,
-          isAfter: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-        },
-      },
-      end_date: {
         type: DataTypes.DATE,
         allowNull: false,
         validate: {
@@ -46,10 +44,12 @@ module.exports = (sequelize, DataTypes) => {
       },
       status: {
         type: DataTypes.VIRTUAL,
-        get() {
+        async get() {
           const now = new Date();
           const startDate = new Date(this.start_date);
-          const endDate = new Date(this.end_date);
+          const endDate = new Date(
+            startDate.getTime() + (await this.getTotalDuration())
+          );
           if (!this.isActive) return "not active";
           else if (now < startDate) return "upcoming";
           else if (now >= startDate && now <= endDate) return "ongoing";

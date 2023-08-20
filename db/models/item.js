@@ -74,6 +74,9 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "Item",
+      defaultScope: {
+        include: "images",
+      },
     }
   );
 

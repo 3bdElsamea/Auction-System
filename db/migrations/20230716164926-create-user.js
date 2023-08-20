@@ -30,9 +30,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      image: {
-        type: Sequelize.STRING,
-      },
       balance: {
         type: Sequelize.INTEGER,
         defaultValue: 0,
