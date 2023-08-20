@@ -12,8 +12,9 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "id",
       });
       //   Item hasMany Item_images
-      models.Item.hasMany(Item_images, {
+      models.Item.hasMany(this, {
         foreignKey: "item_id",
+        as: "images",
       });
     }
   }

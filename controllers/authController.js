@@ -27,9 +27,7 @@ exports.register = catchAsync(async (req, res, next) => {
 });
 
 exports.login = (role) =>
-  catchAsync(async (req, res, next) => {
-    const { email, password } = req.body;
-
+  catchAsync(async ({ body: { email, password } }, res, next) => {
     if (!email || !password)
       return next(new AppError("Please provide email and password", 400));
 

@@ -86,7 +86,6 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
-      image: DataTypes.STRING,
       balance: DataTypes.INTEGER,
       pending_balance: DataTypes.INTEGER,
       false_bids: DataTypes.INTEGER,

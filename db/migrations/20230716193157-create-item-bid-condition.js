@@ -25,9 +25,13 @@ module.exports = {
         },
         type: Sequelize.INTEGER,
       },
-      start_time: {
+      order: {
+        allowNull: true,
+        type: Sequelize.INTEGER,
+      },
+      duration: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.INTEGER,
       },
       start_amount: {
         allowNull: false,
@@ -38,8 +42,8 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       current_high_bid: {
-        allowNull: false,
         type: Sequelize.INTEGER,
+        defaultValue: null,
       },
       close_price: {
         type: Sequelize.INTEGER,
