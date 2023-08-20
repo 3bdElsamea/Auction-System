@@ -8,10 +8,10 @@ const router = require('./routes');
 const app = express();
 
 app.use(cors());
-app.options('*', cors()); // include before other routes
+app.options('*', cors()); // cors preflight
 app.use(express.json({limit: '10kb'}));
 router.use(express.urlencoded({extended: true, limit: '10kb'}));
-app.use(express.static(path.join(__dirname, 'public'))); //lol2
+app.use(express.static(path.join(__dirname, 'public'))); //static files
 
 
 app.use('/', router);
